@@ -1,7 +1,7 @@
 [project]
 name = "mcp-router-use"
 version = "0.1.0"
-description = "MCP Library for LLMs"
+description = "SDK for managing and using MCP servers through MCP Router"
 authors = [
     {name = "fjm2u", email = ""}
 ]

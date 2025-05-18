@@ -122,3 +122,12 @@ dmypy.json
 
 # macOS
 .DS_Store
+
+# mcp-router-use
+mcp_router_use/tree.txt
+
+# Backup files
+*.bak
+*.swp
+*.swo
+*~

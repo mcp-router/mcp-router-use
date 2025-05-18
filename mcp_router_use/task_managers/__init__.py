@@ -1,19 +1,13 @@
 """
-Connectors for various MCP transports.
+Task managers for MCP Router.
 
-This module provides interfaces for connecting to MCP implementations
-through different transport mechanisms.
+This module provides task managers for handling connections to MCP Router.
 """
 
 from .base import ConnectionManager
 from .sse import SseConnectionManager
-from .stdio import StdioConnectionManager
-from .websocket import WebSocketConnectionManager
 
 __all__ = [
     "ConnectionManager",
-    "HttpConnectionManager",
-    "StdioConnectionManager",
-    "WebSocketConnectionManager",
     "SseConnectionManager",
 ]

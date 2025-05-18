@@ -1,13 +1,14 @@
 """
-Connectors for various MCP transports.
+Connectors for MCP Router.
 
 This module provides interfaces for connecting to MCP implementations
-through different transport mechanisms.
+through MCP Router.
 """
 
 from .base import BaseConnector
 from .http import HttpConnector
-from .stdio import StdioConnector
-from .websocket import WebSocketConnector
 
-__all__ = ["BaseConnector", "StdioConnector", "WebSocketConnector", "HttpConnector"]
+__all__ = [
+    "BaseConnector", 
+    "HttpConnector"
+]

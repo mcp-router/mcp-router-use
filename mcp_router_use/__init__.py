@@ -1,8 +1,8 @@
 """
-mcp_router_use - An MCP library for LLMs.
+mcp_router_use - An MCP library for LLMs using MCP Router.
 
 This library provides a unified interface for connecting different LLMs
-to MCP tools through existing LangChain adapters.
+to MCP tools through MCP Router.
 """
 
 from importlib.metadata import version
@@ -10,7 +10,7 @@ from importlib.metadata import version
 from .agents.mcpagent import MCPAgent
 from .client import MCPClient
 from .config import load_config_file
-from .connectors import BaseConnector, HttpConnector, StdioConnector, WebSocketConnector
+from .connectors import BaseConnector, HttpConnector
 from .logging import mcp_router_use_DEBUG, Logger, logger
 from .session import MCPSession
 
@@ -21,10 +21,7 @@ __all__ = [
     "MCPClient",
     "MCPSession",
     "BaseConnector",
-    "StdioConnector",
-    "WebSocketConnector",
     "HttpConnector",
-    "create_session_from_config",
     "load_config_file",
     "logger",
     "mcp_router_use_DEBUG",

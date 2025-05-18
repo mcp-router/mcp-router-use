@@ -9,7 +9,7 @@ import unittest
 from unittest.mock import patch
 
 from mcp_router_use.config import create_connector_from_config, load_config_file
-from mcp_router_use.connectors import HttpConnector, StdioConnector, WebSocketConnector
+from mcp_router_use.connectors import HttpConnector
 
 
 class TestConfigLoading(unittest.TestCase):
@@ -17,7 +17,10 @@ class TestConfigLoading(unittest.TestCase):
 
     def test_load_config_file(self):
         """Test loading a configuration file."""
-        test_config = {"mcpServers": {"test": {"url": "http://test.com"}}}
+        test_config = {
+            "mcpRouter": {"router_url": "http://localhost:3282"},
+            "mcpServers": {"test": {"command": "npx", "args": ["@playwright/mcp"]}}
+        }
 
         # Create a temporary file with test config
         with tempfile.NamedTemporaryFile(mode="w", delete=False) as temp:
@@ -44,7 +47,7 @@ class TestConnectorCreation(unittest.TestCase):
     def test_create_http_connector(self):
         """Test creating an HTTP connector from config."""
         server_config = {
-            "url": "http://test.com",
+            "url": "http://localhost:3282/mcp",
             "headers": {"Content-Type": "application/json"},
             "auth_token": "test_token",
         }
@@ -52,7 +55,7 @@ class TestConnectorCreation(unittest.TestCase):
         connector = create_connector_from_config(server_config)
 
         self.assertIsInstance(connector, HttpConnector)
-        self.assertEqual(connector.base_url, "http://test.com")
+        self.assertEqual(connector.base_url, "http://localhost:3282/mcp")
         self.assertEqual(
             connector.headers,
             {"Content-Type": "application/json", "Authorization": "Bearer test_token"},
@@ -61,69 +64,14 @@ class TestConnectorCreation(unittest.TestCase):
 
     def test_create_http_connector_minimal(self):
         """Test creating an HTTP connector with minimal config."""
-        server_config = {"url": "http://test.com"}
+        server_config = {"url": "http://localhost:3282/mcp"}
 
         connector = create_connector_from_config(server_config)
 
         self.assertIsInstance(connector, HttpConnector)
-        self.assertEqual(connector.base_url, "http://test.com")
+        self.assertEqual(connector.base_url, "http://localhost:3282/mcp")
         self.assertEqual(connector.headers, {})
         self.assertIsNone(connector.auth_token)
-
-    def test_create_websocket_connector(self):
-        """Test creating a WebSocket connector from config."""
-        server_config = {
-            "ws_url": "ws://test.com",
-            "headers": {"Content-Type": "application/json"},
-            "auth_token": "test_token",
-        }
-
-        connector = create_connector_from_config(server_config)
-
-        self.assertIsInstance(connector, WebSocketConnector)
-        self.assertEqual(connector.url, "ws://test.com")
-        self.assertEqual(
-            connector.headers,
-            {"Content-Type": "application/json", "Authorization": "Bearer test_token"},
-        )
-        self.assertEqual(connector.auth_token, "test_token")
-
-    def test_create_websocket_connector_minimal(self):
-        """Test creating a WebSocket connector with minimal config."""
-        server_config = {"ws_url": "ws://test.com"}
-
-        connector = create_connector_from_config(server_config)
-
-        self.assertIsInstance(connector, WebSocketConnector)
-        self.assertEqual(connector.url, "ws://test.com")
-        self.assertEqual(connector.headers, {})
-        self.assertIsNone(connector.auth_token)
-
-    def test_create_stdio_connector(self):
-        """Test creating a stdio connector from config."""
-        server_config = {
-            "command": "python",
-            "args": ["-m", "mcp_server"],
-            "env": {"DEBUG": "1"},
-        }
-
-        connector = create_connector_from_config(server_config)
-
-        self.assertIsInstance(connector, StdioConnector)
-        self.assertEqual(connector.command, "python")
-        self.assertEqual(connector.args, ["-m", "mcp_server"])
-        self.assertEqual(connector.env, {"DEBUG": "1"})
-
-    def test_create_stdio_connector_minimal(self):
-        """Test creating a stdio connector with minimal config."""
-        server_config = {"command": "python", "args": ["-m", "mcp_server"]}
-
-        connector = create_connector_from_config(server_config)
-
-        self.assertIsInstance(connector, StdioConnector)
-        self.assertEqual(connector.command, "python")
-        self.assertEqual(connector.args, ["-m", "mcp_server"])
-        self.assertIsNone(connector.env)
 
     def test_create_connector_invalid_config(self):
         """Test creating a connector with invalid config raises ValueError."""
@@ -132,4 +80,7 @@ class TestConnectorCreation(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             create_connector_from_config(server_config)
 
-        self.assertEqual(str(context.exception), "Cannot determine connector type from config")
+        self.assertEqual(
+            str(context.exception), 
+            "Cannot determine connector type from config. Expected 'url' for MCP Router connection."
+        )
